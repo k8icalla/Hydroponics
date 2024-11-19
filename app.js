@@ -16,12 +16,25 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes from the hydroRoutes file
-app.use('/', hydroRoutes);
+// Session middleware to manage user sessions
+app.use(
+  session({
+    secret: 'hydroponics_secret_key', // Change this to a secure key
+    resave: false,
+    saveUninitialized: false, // Only save session if something is added to it
+  })
+);
 
-// Route to render the index.ejs template
+// Routes
+app.use('/auth', authRoutes); // Auth routes (login/signup)
+app.use('/hydro', hydroRoutes); // Hydroponics-related routes
+
+// Middleware to redirect unauthenticated users to login
 app.get('/', (req, res) => {
-  res.render('index'); // Render 'index.ejs' in the "views" directory
+  if (!req.session.user) {
+    return res.redirect('/auth/login'); // Redirect to login if not authenticated
+  }
+  res.render('index'); // Render 'index.ejs' if authenticated
 });
 
 // API endpoint to fetch all temperature readings
