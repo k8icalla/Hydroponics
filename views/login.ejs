@@ -1,36 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <h2>Login</h2>
-    <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button type="button" onclick="login()">Login</button>
-    </form>
-    <button onclick="window.location.href='signup.ejs'">Signup Here</button>
-    <script>
-        async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            const response = await fetch('/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-
-            const result = await response.json();
-            alert(result.message);
-
-            if (response.status === 200) {
-                window.location.href = 'ph.html';
-            }
-        }
-    </script>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1>Login</h1>
+      <form action="/auth/login" method="POST">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
+      <p class="switch-link">
+        Don't have an account? <a href="/auth/signup">Sign up here</a>
+      </p>
+    </div>
+  </div>
 </body>
 </html>
