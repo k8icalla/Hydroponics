@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controller</title>
+    <title>Controller Page</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* General Body Styling */
         body {
@@ -56,8 +57,8 @@
             padding-bottom: 5px;
         }
 
-        /* Placeholder Content Styling */
-        .content-container {
+        /* Controller Section Styling */
+        .controller-container {
             width: 90%;
             max-width: 800px;
             background: #fff;
@@ -65,7 +66,14 @@
             border-radius: 8px;
             padding: 20px;
             margin: 20px auto;
+        }
+
+        /* Footer Styling */
+        footer {
             text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
         }
 
         /* Responsive Adjustments */
@@ -108,10 +116,38 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <h2>Controller Page</h2>
-        <div class="content-container">
-            <p>THIS Function IS NOT AVAILABLE</p>
+        <h2>Controller Panel</h2>
+
+        <div class="controller-container">
+            <h3>Control Settings</h3>
+            <form action="/controller/update" method="POST">
+                <div>
+                    <label for="pumpStatus">Pump Status:</label>
+                    <select id="pumpStatus" name="pumpStatus">
+                        <option value="on">On</option>
+                        <option value="off">Off</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="temperatureSetting">Temperature Setting (°C):</label>
+                    <input type="number" id="temperatureSetting" name="temperatureSetting" min="15" max="30">
+                </div>
+
+                <div>
+                    <label for="phSetting">pH Setting:</label>
+                    <input type="number" id="phSetting" name="phSetting" step="0.1" min="5.0" max="7.5">
+                </div>
+
+                <button type="submit">Update Settings</button>
+            </form>
         </div>
+
+        <footer>Data updates every 5 seconds</footer>
     </div>
+
+    <script>
+        // Any JavaScript for interaction can be added here if needed
+    </script>
 </body>
 </html>

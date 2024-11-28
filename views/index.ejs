@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Temperature and pH Data</title>
+    <title>Real-Time Temperature, pH, and TDS Data</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* General Body Styling */
@@ -132,6 +132,11 @@
             <canvas id="phChart"></canvas>
         </div>
 
+        <h2>Real-Time TDS Data</h2>
+        <div class="chart-container">
+            <canvas id="tdsChart"></canvas>
+        </div>
+
         <footer>Data updates every 5 seconds</footer>
     </div>
 
@@ -220,6 +225,48 @@
             }
         });
 
+        // TDS Chart
+        const ctxTDS = document.getElementById('tdsChart').getContext('2d');
+        const tdsChart = new Chart(ctxTDS, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'TDS (ppm)',
+                    data: [],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'category',
+                        title: {
+                            display: true,
+                            text: 'Time',
+                            font: { weight: 'bold' }
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'TDS (ppm)',
+                            font: { weight: 'bold' }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                animation: { duration: 0 }
+            }
+        });
+
         // Function to fetch temperature data from the server
         function fetchTemperatureData() {
             fetch('/temperature')
@@ -272,10 +319,37 @@
                 .catch(error => console.error('Error fetching pH data:', error));
         }
 
+        // Function to fetch TDS data from the server
+        function fetchTDSData() {
+            fetch('/tds_readings')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const latestReading = data[0];
+                        const readingTime = new Date(latestReading.timestamp).toLocaleString();
+                        const tdsValue = latestReading.tds_value;
+
+                        // Update TDS chart
+                        tdsChart.data.labels.push(readingTime);
+                        tdsChart.data.datasets[0].data.push(tdsValue);
+
+                        // Limit to the last 20 data points
+                        if (tdsChart.data.labels.length > 20) {
+                            tdsChart.data.labels.shift();
+                            tdsChart.data.datasets[0].data.shift();
+                        }
+
+                        tdsChart.update();
+                    }
+                })
+                .catch(error => console.error('Error fetching TDS data:', error));
+        }
+
         // Fetch data every 5 seconds
         setInterval(() => {
             fetchTemperatureData();
             fetchPHData();
+            fetchTDSData();
         }, 5000);
     </script>
 </body>
