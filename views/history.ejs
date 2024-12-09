@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydroponics Data History</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F7F6F7;
+            margin: 0;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            background-color: #14BAB5;
+            color: #F7F6F7;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding-top: 20px;
+        }
+
+        .sidebar h3 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            color: #F7F6F7;
+            padding: 15px 20px;
+            margin: 5px 0;
+            text-decoration: none;
+            font-size: 1.1em;
+            width: 90%;
+            text-align: left;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .sidebar a:hover {
+            background-color: #FAB946;
+            transform: scale(1.05);
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+            background-color: #B0E4F4;
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #34495e;
+            text-align: center;
+            border-bottom: 2px solid #34495e;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: #F7F6F7;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #34495e;
+            text-align: center;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #14BAB5;
+            color: white;
+            font-size: 1.1em;
+        }
+
+        td {
+            background-color: #F7F6F7;
+        }
+
+        tr:hover {
+            background-color: #FAB946;
+        }
+
+        /* Footer Styling */
+        footer {
+            text-align: center;
+            margin-top: 186px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h3>Dashboard</h3>
+        <a href="/">Dashboard</a>
+        <a href="/controller">Controller</a>
+        <a href="/history">History</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2>Hydroponics Data History</h2>
+
+        <!-- Toggleable Temperature Readings -->
+        <div class="card" onclick="toggleVisibility('temperatureTable')">
+            <h3>Temperature Readings</h3>
+        </div>
+        <div class="card-content" id="temperatureTable" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Temperature (°C)</th>
+                        <th>Temperature (°F)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (temperatureData && temperatureData.length > 0) { %>
+                        <% temperatureData.forEach(row => { %>
+                            <tr>
+                                <td><%= row.reading_time || 'N/A' %></td>
+                                <td><%= row.temperature_celsius || 'N/A' %></td>
+                                <td><%= row.temperature_fahrenheit || 'N/A' %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="3">No data available</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Toggleable pH Readings -->
+        <div class="card" onclick="toggleVisibility('phTable')">
+            <h3>pH Readings</h3>
+        </div>
+        <div class="card-content" id="phTable" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>pH Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (phData && phData.length > 0) { %>
+                        <% phData.forEach(row => { %>
+                            <tr>
+                                <td><%= row.timestamp || 'N/A' %></td>
+                                <td><%= row.pH_value || 'N/A' %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="2">No data available</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Toggleable TDS Readings -->
+        <div class="card" onclick="toggleVisibility('tdsTable')">
+            <h3>TDS Readings</h3>
+        </div>
+        <div class="card-content" id="tdsTable" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>TDS Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (tdsData && tdsData.length > 0) { %>
+                        <% tdsData.forEach(row => { %>
+                            <tr>
+                                <td><%= row.id || 'N/A' %></td>
+                                <td><%= row.tds_value || 'N/A' %></td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="2">No data available</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>Data updates every 5 seconds</footer>
+    </div>
+
+    <script>
+        // Function to toggle visibility of sections
+        function toggleVisibility(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section.style.display === "none") {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

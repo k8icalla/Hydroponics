@@ -8,5 +8,6 @@ router.get('/', hydroController.getIndex);      // Home page
 router.get('/login', hydroController.getLogin);  // Login page
 router.get('/signup', hydroController.getSignup); // Signup page
 router.get('/controller', hydroController.getController); // Controller page
+router.get('/history', hydroController.getHistory);
 
 module.exports = router;

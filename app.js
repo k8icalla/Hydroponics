@@ -28,8 +28,9 @@ app.use(
 );
 
 // Routes
-app.use('/auth', authRoutes); // Auth routes (login/signup)
 app.use('/hydro', hydroRoutes); // Hydroponics-related routes
+app.use('/auth', authRoutes); // Auth routes (login/signup)
+
 
 // Define the /controller route
 app.get('/controller', (req, res) => {
@@ -104,6 +105,17 @@ app.get('/tds_readings', (req, res) => {
     }
   });
 });
+
+// Logout route
+app.get('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send('Error logging out.');
+    }
+    res.redirect('/auth/login'); // Redirect to login page after logging out
+  });
+});
+
 
 
 // Start the server
